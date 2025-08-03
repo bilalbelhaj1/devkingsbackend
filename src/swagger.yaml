@@ -1,0 +1,836 @@
+openapi: 3.0.3
+info:
+  title: Student API
+  description: API for managing students, tutorials, lessons, quizzes, and FAQs
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@studentapi.com
+
+servers:
+  - url: "http://localhost:5000/api/"
+    description: Main server
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: "john"
+        lastName:
+          type: string
+          example: "doe"
+        email:
+          type: string
+          format: email
+          example: "john@gmail.com"
+        password:
+          type: string
+          example: "secret"
+        role:
+          type: string
+          enum: [student, teacher]
+          example: "student"
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: "john1@gmail.com"
+        password:
+          type: string
+          example: "secret"
+
+    RegisterRequest:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+        - password
+        - confirmPassword
+        - role
+      properties:
+        firstName:
+          type: string
+          example: "john"
+        lastName:
+          type: string
+          example: "doe"
+        email:
+          type: string
+          format: email
+          example: "john1@gmail.com"
+        password:
+          type: string
+          example: "secret"
+        confirmPassword:
+          type: string
+          example: "secret"
+        role:
+          type: string
+          enum: [student, teacher]
+          example: "student"
+
+    AuthResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: "johns"
+        lastName:
+          type: string
+          example: "doe"
+        email:
+          type: string
+          format: email
+          example: "john@gmail.com"
+        password:
+          type: string
+          example: "secret"
+        role:
+          type: string
+          enum: [student, teacher]
+          example: "teacher"
+
+    ReviewRequest:
+      type: object
+      required:
+        - rating
+        - comment
+      properties:
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+          example: 5
+        comment:
+          type: string
+          example: "This Is A Good Tutorial"
+
+    QuizAnswersRequest:
+      type: object
+      required:
+        - answers
+      properties:
+        answers:
+          type: array
+          items:
+            type: string
+          example:
+            - "Fundamental principles and core concepts"
+            - "Advanced implementation techniques"
+            - "Common pitfalls and how to avoid them"
+
+    FAQRequest:
+      type: object
+      required:
+        - question
+        - answer
+      properties:
+        question:
+          type: string
+          example: "How we can learn front-end"
+        answer:
+          type: string
+          example: "By Learning all the front-end basics like html, css, javaScript, React"
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        error:
+          type: string
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      description: Create a new user account with the provided information
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticate user and return access and refresh tokens
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/refresh-token:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      description: Generate a new access token using refresh token
+      security: []
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /student/update-profile:
+    patch:
+      tags:
+        - Student Profile
+      summary: Update student profile
+      description: Update student profile information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      responses:
+        '200':
+          description: Profile updated successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /student/logout:
+    post:
+      tags:
+        - Student Profile
+      summary: Logout student
+      description: Logout the current student session
+      security: []
+      responses:
+        '200':
+          description: Logout successful
+
+  /student/tutorials:
+    get:
+      tags:
+        - Tutorials
+      summary: Get all tutorials
+      description: Retrieve a list of all available tutorials
+      security: []
+      responses:
+        '200':
+          description: List of tutorials retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+  /student/tutorials/{tutorialId}:
+    get:
+      tags:
+        - Tutorials
+      summary: Get tutorial by ID
+      description: Retrieve a specific tutorial by its ID
+      security: []
+      parameters:
+        - name: tutorialId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6883799e1d8df9db3475b179"
+      responses:
+        '200':
+          description: Tutorial retrieved successfully
+        '404':
+          description: Tutorial not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /student/tutorials/{tutorialId}/lessons:
+    get:
+      tags:
+        - Tutorials
+      summary: Get tutorial lessons
+      description: Retrieve all lessons for a specific tutorial
+      security: []
+      parameters:
+        - name: tutorialId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6883799e1d8df9db3475b177"
+      responses:
+        '200':
+          description: Tutorial lessons retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+  /student/tutorials/{tutorialId}/resources:
+    get:
+      tags:
+        - Tutorials
+      summary: Get tutorial resources
+      description: Retrieve all resources for a specific tutorial
+      security: []
+      parameters:
+        - name: tutorialId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6883799e1d8df9db3475b177"
+      responses:
+        '200':
+          description: Tutorial resources retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+  /student/tutorials/{tutorialId}/save:
+    post:
+      tags:
+        - Tutorials
+      summary: Save tutorial
+      description: Save a tutorial to student's saved list
+      parameters:
+        - name: tutorialId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6883799e1d8df9db3475b178"
+      responses:
+        '200':
+          description: Tutorial saved successfully
+
+  /student/tutorials/{tutorialId}/unsave:
+    delete:
+      tags:
+        - Tutorials
+      summary: Unsave tutorial
+      description: Remove a tutorial from student's saved list
+      parameters:
+        - name: tutorialId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6883799e1d8df9db3475b178"
+      responses:
+        '200':
+          description: Tutorial unsaved successfully
+
+  /student/saved-tutorials:
+    get:
+      tags:
+        - Tutorials
+      summary: Get saved tutorials
+      description: Retrieve all tutorials saved by the student
+      responses:
+        '200':
+          description: Saved tutorials retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+  /student/tutorials/{tutorialId}/enroll:
+    post:
+      tags:
+        - Enrollment
+      summary: Enroll in tutorial
+      description: Enroll student in a specific tutorial
+      parameters:
+        - name: tutorialId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6883799e1d8df9db3475b178"
+      responses:
+        '200':
+          description: Enrollment successful
+
+  /student/tutorials/{tutorialId}/unenroll:
+    delete:
+      tags:
+        - Enrollment
+      summary: Unenroll from tutorial
+      description: Unenroll student from a specific tutorial
+      parameters:
+        - name: tutorialId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6883799e1d8df9db3475b178"
+      responses:
+        '200':
+          description: Unenrollment successful
+
+  /student/enrolled-tutorials:
+    get:
+      tags:
+        - Enrollment
+      summary: Get enrolled tutorials
+      description: Retrieve all tutorials the student is enrolled in
+      responses:
+        '200':
+          description: Enrolled tutorials retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+  /student/lessons/{lessonId}:
+    get:
+      tags:
+        - Lessons
+      summary: Get lesson by ID
+      description: Retrieve a specific lesson by its ID
+      security: []
+      parameters:
+        - name: lessonId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "688379a01d8df9db3475b1a9"
+      responses:
+        '200':
+          description: Lesson retrieved successfully
+        '404':
+          description: Lesson not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /student/resources/{resourceId}:
+    get:
+      tags:
+        - Resources
+      summary: Get resource by ID
+      description: Retrieve a specific resource by its ID
+      security: []
+      parameters:
+        - name: resourceId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6883799e1d8df9db3475b16e"
+      responses:
+        '200':
+          description: Resource retrieved successfully
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /student/completed/{tutorialId}/{lessonId}:
+    post:
+      tags:
+        - Progress
+      summary: Mark lesson as completed
+      description: Mark a specific lesson as completed for the student
+      parameters:
+        - name: tutorialId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6883799e1d8df9db3475b177"
+        - name: lessonId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "688379a01d8df9db3475b1ab"
+      responses:
+        '200':
+          description: Lesson marked as completed successfully
+
+  /student/completed/{tutorialId}:
+    get:
+      tags:
+        - Progress
+      summary: Get completed lessons for tutorial
+      description: Retrieve all completed lessons for a specific tutorial
+      parameters:
+        - name: tutorialId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6883799e1d8df9db3475b178"
+      responses:
+        '200':
+          description: Completed lessons retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+  /student/tutorials/{tutorialId}/reviews:
+    get:
+      tags:
+        - Reviews
+      summary: Get tutorial reviews
+      description: Retrieve all reviews for a specific tutorial
+      security: []
+      parameters:
+        - name: tutorialId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6883799e1d8df9db3475b178"
+      responses:
+        '200':
+          description: Tutorial reviews retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+    post:
+      tags:
+        - Reviews
+      summary: Submit review
+      description: Submit a review for a specific tutorial
+      parameters:
+        - name: tutorialId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6883799e1d8df9db3475b178"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewRequest'
+      responses:
+        '201':
+          description: Review submitted successfully
+
+  /student/quizzes/{tutorialId}:
+    get:
+      tags:
+        - Quizzes
+      summary: Get quiz by tutorial ID
+      description: Retrieve quiz for a specific tutorial
+      parameters:
+        - name: tutorialId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6883799e1d8df9db3475b177"
+      responses:
+        '200':
+          description: Quiz retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /student/quizzes/{tutorialId}/submit:
+    post:
+      tags:
+        - Quizzes
+      summary: Submit quiz answers
+      description: Submit answers for a specific quiz
+      parameters:
+        - name: tutorialId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6883799e1d8df9db3475b177"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizAnswersRequest'
+      responses:
+        '200':
+          description: Quiz answers submitted successfully
+
+  /student/scores:
+    get:
+      tags:
+        - Scores
+      summary: Get all scores
+      description: Retrieve all quiz scores for the student
+      responses:
+        '200':
+          description: Scores retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+  /student/scores/{quizId}:
+    get:
+      tags:
+        - Scores
+      summary: Get score for specific quiz
+      description: Retrieve score for a specific quiz
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "688379a11d8df9db3475b1c4"
+      responses:
+        '200':
+          description: Quiz score retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /student/faqs:
+    get:
+      tags:
+        - FAQs
+      summary: Get all FAQs
+      description: Retrieve all frequently asked questions
+      security: []
+      responses:
+        '200':
+          description: FAQs retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+  /student/faqs/{faqId}:
+    get:
+      tags:
+        - FAQs
+      summary: Get FAQ by ID
+      description: Retrieve a specific FAQ by its ID
+      security: []
+      parameters:
+        - name: faqId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6883799f1d8df9db3475b184"
+      responses:
+        '200':
+          description: FAQ retrieved successfully
+        '404':
+          description: FAQ not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    patch:
+      tags:
+        - FAQs
+      summary: Update FAQ
+      description: Update an existing FAQ
+      parameters:
+        - name: faqId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6884cfbe884ad91b3a50f8bc"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FAQRequest'
+      responses:
+        '200':
+          description: FAQ updated successfully
+
+    delete:
+      tags:
+        - FAQs
+      summary: Delete FAQ
+      description: Delete an existing FAQ
+      parameters:
+        - name: faqId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6884cfc2884ad91b3a50f8c0"
+      responses:
+        '200':
+          description: FAQ deleted successfully
+
+  /student/tutorials/{tutorialId}/faqs:
+    get:
+      tags:
+        - FAQs
+      summary: Get FAQs for tutorial
+      description: Retrieve all FAQs for a specific tutorial
+      security: []
+      parameters:
+        - name: tutorialId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6883799e1d8df9db3475b177"
+      responses:
+        '200':
+          description: Tutorial FAQs retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+    post:
+      tags:
+        - FAQs
+      summary: Create FAQ for tutorial
+      description: Create a new FAQ for a specific tutorial
+      parameters:
+        - name: tutorialId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "6883799e1d8df9db3475b177"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FAQRequest'
+      responses:
+        '201':
+          description: FAQ created successfully
+
+tags:
+  - name: Authentication
+    description: User authentication endpoints
+  - name: Student Profile
+    description: Student profile management
+  - name: Tutorials
+    description: Tutorial management and browsing
+  - name: Enrollment
+    description: Tutorial enrollment management
+  - name: Lessons
+    description: Lesson access and management
+  - name: Resources
+    description: Resource access and management
+  - name: Progress
+    description: Learning progress tracking
+  - name: Reviews
+    description: Tutorial review system
+  - name: Quizzes
+    description: Quiz management and submission
+  - name: Scores
+    description: Quiz score tracking
+  - name: FAQs
+    description: Frequently Asked Questions management

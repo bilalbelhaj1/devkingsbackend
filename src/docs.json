@@ -1,0 +1,604 @@
+{
+	"info": {
+		"_postman_id": "f9722358-614b-49ab-86bf-da24fdf23c38",
+		"name": "Student API Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "45903210",
+		"_collection_link": "https://zahaanass.postman.co/workspace/Zaha-Anass's-Workspace~8e6c67c6-02be-40d0-83ac-59d2d669ea1d/collection/45903210-f9722358-614b-49ab-86bf-da24fdf23c38?action=share&source=collection_link&creator=45903210"
+	},
+	"item": [
+		{
+			"name": "Update Profile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{refreshToken}}"
+					}
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"johns\",\n    \"lastName\": \"doe\",\n    \"email\": \"john@gmail.com\",\n    \"password\": \"secret\",\n    \"role\": \"teacher\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{URL}}/student/update-profile"
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"exampleKey\": \"exampleValue\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{URL}}/student/logout"
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();",
+							"pm.globals.set(\"accessToken\", jsonData.accessToken)",
+							"pm.globals.set(\"refreshToken\", jsonData.refreshToken)",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{refreshToken}}"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"john1@gmail.com\",\n    \"password\": \"secret\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{URL}}/auth/login"
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();",
+							"pm.globals.set(\"accessToken\", jsonData.accessToken)",
+							"pm.globals.set(\"refreshToken\", jsonData.refreshToken)",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{refreshToken}}"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"john\",\n    \"lastName\": \"doe\",\n    \"email\": \"john1@gmail.com\",\n    \"password\": \"secret\",\n    \"confirmPassword\": \"secret\",\n    \"role\": \"student\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{URL}}/auth/register"
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Tutorial",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/student/tutorials"
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh Token",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/auth/refresh-token"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tutorial Lessons",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/student/tutorials/6883799e1d8df9db3475b177/lessons"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tutorial Resources",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/student/tutorials/6883799e1d8df9db3475b177/resources"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tutorial By Id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/student/tutorials/6883799e1d8df9db3475b179"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Lesson By Id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/student/lessons/688379a01d8df9db3475b1a9"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Resources By Id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/student/resources/6883799e1d8df9db3475b16e"
+			},
+			"response": []
+		},
+		{
+			"name": "Save Tutorial",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"exampleKey\": \"exampleValue\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{URL}}/student/tutorials/6883799e1d8df9db3475b178/save"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Saved Tutorial",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/student/tutorials/6883799e1d8df9db3475b178/unsave"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Saved Tutorials",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/student/saved-tutorials"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tutorial Review",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"exampleKey\": \"exampleValue\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{URL}}/student/tutorials/6883799e1d8df9db3475b178/reviews"
+			},
+			"response": []
+		},
+		{
+			"name": "Submit Review",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"rating\": 5,\n  \"comment\": \"This Is A Good Tutorial\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{URL}}/student/tutorials/6883799e1d8df9db3475b178/reviews"
+			},
+			"response": []
+		},
+		{
+			"name": "Enroll Tutorial",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"exampleKey\": \"exampleValue\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{URL}}/student/tutorials/6883799e1d8df9db3475b178/enroll"
+			},
+			"response": []
+		},
+		{
+			"name": "Unenroll Tutorial",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/student/tutorials/6883799e1d8df9db3475b178/unenroll"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Enrolled Tutorials",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/student/enrolled-tutorials"
+			},
+			"response": []
+		},
+		{
+			"name": "Mark Lesson As Completed",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"exampleKey\": \"exampleValue\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{URL}}/student/completed/6883799e1d8df9db3475b177/688379a01d8df9db3475b1ab"
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Completed Lessons For Student With TutorialId",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/student/completed/6883799e1d8df9db3475b178"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Quiz By TutorialId",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/student/quizzes/6883799e1d8df9db3475b177"
+			},
+			"response": []
+		},
+		{
+			"name": "Submit Quiz Answers",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"answers\": [\n        \"Fundamental principles and core concepts\",\n        \"Advanced implementation techniques\",\n        \"Common pitfalls and how to avoid them\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{URL}}/student/quizzes/6883799e1d8df9db3475b177/submit"
+			},
+			"response": []
+		},
+		{
+			"name": "Get all scores for student",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/student/scores"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Score For A Specific Quiz For A Student",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/student/scores/688379a11d8df9db3475b1c4"
+			},
+			"response": []
+		},
+		{
+			"name": "Get All FAQs",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/student/faqs"
+			},
+			"response": []
+		},
+		{
+			"name": "Get FAQ By Id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/student/faqs/6883799f1d8df9db3475b184"
+			},
+			"response": []
+		},
+		{
+			"name": "Get FAQs For A Tutorial",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/student/tutorials/6883799e1d8df9db3475b177/faqs"
+			},
+			"response": []
+		},
+		{
+			"name": "Create FAQ for a Tutorial",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"question\": \"How we can learn front-end\",\n  \"answer\": \"By Learning all the front-end basics like html, css, javaScript, React\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{URL}}/student/tutorials/6883799e1d8df9db3475b177/faqs"
+			},
+			"response": []
+		},
+		{
+			"name": "Update FAQ",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"question\": \"test10\",\n    \"answer\": \"test20\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{URL}}/student/faqs/6884cfbe884ad91b3a50f8bc"
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /faqs/:id",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{URL}}/student/faqs/6884cfc2884ad91b3a50f8c0"
+			},
+			"response": []
+		}
+	]
+}
