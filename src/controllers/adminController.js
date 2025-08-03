@@ -523,20 +523,21 @@ exports.loginAdmin = async (req, res)=>{
         const accessToken = admin.createAccessToken();
         const refreshToken = admin.createRefreshToken();
 
-        // Store tokens in session
-        res.cookie('accessToken', accessToken, {
-        httpOnly: true,
-        secure: false,//process.env.NODE_ENV === 'production',
-        sameSite: 'Lax',
-        maxAge: 15 * 600 * 1000, // 15 mins
-      });
+        const isProd = process.env.NODE_ENV === 'production';
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? 'None' : 'Lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 15 mins
+    });
 
-      res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: 'Lax',
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      });
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? 'None' : 'Lax',
+      maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+    });
+
 
         res.status(200).json({
           accessToken,

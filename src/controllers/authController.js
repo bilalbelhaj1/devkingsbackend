@@ -57,17 +57,18 @@ const LoginUser = async (req, res) => {
     const refreshToken = user.createRefreshToken();
     console.log(accessToken)
     console.log(refreshToken)
+    const isProd = process.env.NODE_ENV === 'production';
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'Lax',
+      secure: isProd,
+      sameSite: isProd ? 'None' : 'Lax',
       maxAge: 7 * 24 * 60 * 60 * 1000 // 15 mins
     });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'Lax',
+      secure: isProd,
+      sameSite: isProd ? 'None' : 'Lax',
       maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
     });
 
