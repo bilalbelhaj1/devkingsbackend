@@ -5,7 +5,7 @@ dotenv.config();
 const PORT = process.env.PORT || 5000;
 const startServer = async () => {
   try {
-    await connectDB(process.env.LOCAL_DB);
+    await connectDB(process.env.MONGO_URI);
     console.log('Database connected successfully');
     
     app.listen(PORT, () => {
