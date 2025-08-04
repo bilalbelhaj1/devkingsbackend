@@ -213,6 +213,7 @@ const getAllCourses = async (req, res) => {
         res.status(500).json({ error: 'Server error', details: err.message });
     }
 };
+
 // get all the details about the course
 const getCourseDetails = async (req, res) => {
     try {

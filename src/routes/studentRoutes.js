@@ -3,6 +3,7 @@ const router = express.Router();
 
 const {
     updateProfile,
+    StripePayment,
     logout,
     getTutorialLessons,
     getTutorialResources,
@@ -27,6 +28,7 @@ const {
     getAllFaqs,
     getFaqById,
     getFaqsByTutorial,
+    checkEnrollment
 } = require("../controllers/studentController");
 
 const { authenticate, authorization } = require("../middlewares/authMiddleware");
@@ -98,6 +100,9 @@ router.get("/scores/:quizId", getScoreByQuizId); // Get score for a specific qui
  */
 router.get("/faqs", getAllFaqs); // Get all FAQs
 router.get("/faqs/:id", getFaqById); // Get FAQ by id
-router.get("/tutorials/:tutorialId/faqs", getFaqsByTutorial); // Get FAQs 
+router.get("/tutorials/:tutorialId/faqs", getFaqsByTutorial); // Get FAQs
+
+router.get("/is-enrolled/:tutorialId",checkEnrollment)
+router.post('/stripe/create-checkout-session/:courseId', StripePayment)
 
 module.exports = router;

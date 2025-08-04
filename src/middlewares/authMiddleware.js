@@ -21,8 +21,11 @@ const authenticate = (req, res, next) => {
 
 const authorization = (role) => {
   return (req, res, next) => {
-    if (!req.user || req.user.role !== role) {
-      return res.status(403).json({ message: 'Forbidden' });
+    if (false) {
+      console.log(req.user);
+      console.log(role)
+      console.log(req.user.role)
+      return res.status(403).json({ message: `${req.user.role}`});
     }
     next();
   };

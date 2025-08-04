@@ -372,7 +372,61 @@ const getReviews = async (req, res) => {
     res.status(StatusCodes.OK).json({ reviews });
 };
 
+const checkEnrollment = async (req, res) => {
+  const { tutorialId } = req.params;
+  const { userId } = req.user;
+
+  const enrolledTutorial = await Enrolled.findOne({ userId, tutorialId });
+
+  res.status(200).json({ enrolled: !!enrolledTutorial });
+};
+
+const stripe = require('stripe')(process.env.STRIPE_KEY)
+
+const StripePayment = async (req, res)=>{
+    const  courseId = req.params.courseId;
+    const userId = req.user.userId;
+    console.log(courseId)
+    try {
+    const course = await Tutorial.findById(courseId);
+    console.log(course)
+    if (!course) return res.status(404).json({ error: 'Course not found' });
+
+    const YOUR_DOMAIN = 'https://dev-kings.vercel.app/'; 
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'payment',
+      line_items: [{
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: course.title,
+            description: course.description
+          },
+          unit_amount: course.price * 100,
+        },
+        quantity: 1,
+      }],
+      metadata: {
+        courseId,
+        userId
+      },
+      success_url: `${YOUR_DOMAIN}/payment-success/${courseId}`,
+      cancel_url: `${YOUR_DOMAIN}/course_enroll`,
+    });
+
+    res.json({ url: session.url });
+
+  } catch (err) {
+    console.error("Stripe session error:", err);
+    res.status(500).json({ error: 'Unable to create checkout session' });
+  }
+}
+
 module.exports = {
+    StripePayment,
+    checkEnrollment,
     updateProfile,
     logout,
     getTutorialLessons,
