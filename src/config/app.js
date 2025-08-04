@@ -7,8 +7,21 @@ const path = require('path');
 
 const app = express();
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://dev-kings.vercel.app/',
+  'https://dev-front-omega.vercel.app/'
+
+];
+
 app.use(cors({
-  origin: true, // or use '*', but only if you don't need credentials
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
