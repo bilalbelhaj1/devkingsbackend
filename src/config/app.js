@@ -12,7 +12,6 @@ const allowedOrigins = [
   'https://dev-kings.vercel.app',
   'https://dev-front-omega.vercel.app',
   'https://devkingfrontend.vercel.app'
-
 ];
 
 app.use(cors({
