@@ -10,7 +10,8 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:5173',
   'https://dev-kings.vercel.app',
-  'https://dev-front-omega.vercel.app'
+  'https://dev-front-omega.vercel.app',
+  'https://devkingfrontend.vercel.app'
 
 ];
 

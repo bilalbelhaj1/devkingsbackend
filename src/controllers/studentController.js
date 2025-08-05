@@ -1,5 +1,4 @@
 const { StatusCodes } = require("http-status-codes");
-
 const User = require("../models/User");
 const Tutorial = require("../models/Tutorial");
 const Lesson = require("../models/Lesson");
@@ -8,6 +7,7 @@ const Enrolled = require("../models/Enrolled");
 const Resource = require("../models/Resource");
 const SavedTutorial = require("../models/SavedTutorial");
 const Faq = require("../models/Faq");
+const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 // 1. Update Profile
 const updateProfile = async (req, res) => {
@@ -194,9 +194,10 @@ const unsaveTutorial = async (req, res) => {
 const enrollTutorial = async (req, res) => {
     const { tutorialId } = req.params;
     const { userId } = req.user;
-
+    console.log(tutorialId)
+    console.log(userId)
     const enrolledTutorial = await Enrolled.findOne({ userId, tutorialId });
-
+    console.log(enrolledTutorial)
     if (enrolledTutorial) {
         return res.status(StatusCodes.OK).json({ message: "Tutorial already enrolled" });
     }
@@ -372,16 +373,24 @@ const getReviews = async (req, res) => {
     res.status(StatusCodes.OK).json({ reviews });
 };
 
+const mongoose = require('mongoose');
+
 const checkEnrollment = async (req, res) => {
   const { tutorialId } = req.params;
-  const { userId } = req.user;
+  const userId = req.user.userId;
 
-  const enrolledTutorial = await Enrolled.findOne({ userId, tutorialId });
+  console.log("tutorialId:", tutorialId);
+  console.log("userId:", userId);
+
+  const enrolledTutorial = await Enrolled.findOne({
+    studentId: new mongoose.Types.ObjectId(userId),
+    tutorialId: new mongoose.Types.ObjectId(tutorialId)
+  });
+
+  console.log("Matched enrollment:", enrolledTutorial);
 
   res.status(200).json({ enrolled: !!enrolledTutorial });
 };
-
-const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 const StripePayment = async (req, res)=>{
     const  courseId = req.params.courseId;
@@ -392,7 +401,7 @@ const StripePayment = async (req, res)=>{
     console.log(course)
     if (!course) return res.status(404).json({ error: 'Course not found' });
 
-    const YOUR_DOMAIN = 'https://dev-kings.vercel.app/'; 
+    const YOUR_DOMAIN = 'https://devkingfrontend.vercel.app'; 
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
