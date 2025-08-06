@@ -401,7 +401,7 @@ const StripePayment = async (req, res)=>{
     console.log(course)
     if (!course) return res.status(404).json({ error: 'Course not found' });
 
-    const YOUR_DOMAIN = 'https://devkingfrontend.vercel.app'; 
+    const YOUR_DOMAIN = 'https://dev-kings.vercel.app'; 
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
