@@ -805,7 +805,7 @@ const getTopLearners = async (req, res) => {
 };
 
 const getTopCourses = async (req, res) => {
-  const teacherId = req.userId;
+  const teacherId = req.user.userId;
   const { start, end } = getDateRange(req.query.period || 'month');
 
   const tutorialIds = await getTeacherTutorialIds(teacherId);
